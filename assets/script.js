@@ -1,5 +1,5 @@
 // Configuration - UPDATE WITH YOUR WEB APP URL
-const WEB_APP_URL = 'https://script.google.com/macros/s/YOUR_SCRIPT_ID/exec';
+const WEB_APP_URL = 'https://script.google.com/macros/s/1Sui2INwTLcblVNn7DltjAk5Q86iyFvCPLyUPTEPyPW4wv-BzEK5Cz6Pp/exec';
 
 // Live data loader
 async function loadData() {
@@ -29,7 +29,7 @@ async function loadData() {
 // Fallback to GitHub data
 async function loadCachedData() {
     try {
-        const GITHUB_BASE_URL = 'https://yourusername.github.io/society-dashboard';
+        const GITHUB_BASE_URL = 'https://dkapoore.github.io/society-dashboard';
         const [reports, members, maintenance, expenses] = await Promise.all([
             fetch(`${GITHUB_BASE_URL}/data/reports.json`).then(r => r.json()),
             fetch(`${GITHUB_BASE_URL}/data/members.json`).then(r => r.json()),
@@ -217,7 +217,7 @@ function showError(message) {
 
 // Modal functions
 function showRawData() {
-    fetch(`${WEB_APP_URL}?action=all`)
+    fetch(`${https://dkapoore.github.io/society-dashboard/}?action=all`)
         .then(r => r.json())
         .then(data => {
             document.getElementById('rawDataContent').textContent = JSON.stringify(data, null, 2);
