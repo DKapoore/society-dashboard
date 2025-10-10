@@ -1,0 +1,67 @@
+{
+  "lastUpdated": "2024-01-15T10:30:00.000Z",
+  "totalMembers": 5,
+  "activeMembers": 5,
+  "members": [
+    {
+      "id": "MEM-202401-001",
+      "name": "Rajesh Sharma",
+      "flat": "A-101",
+      "mobile": "9876543210",
+      "type": "Owner",
+      "monthlyCharge": 2500,
+      "pendingAmount": 0,
+      "lastPaidMonth": "Jan-2024",
+      "joinDate": "01-Jan-2023",
+      "status": "Active"
+    },
+    {
+      "id": "MEM-202401-002",
+      "name": "Priya Singh",
+      "flat": "A-102",
+      "mobile": "9876543211",
+      "type": "Owner",
+      "monthlyCharge": 2500,
+      "pendingAmount": 2500,
+      "lastPaidMonth": "Dec-2023",
+      "joinDate": "01-Jan-2023",
+      "status": "Active"
+    },
+    {
+      "id": "MEM-202401-003",
+      "name": "Amit Verma",
+      "flat": "B-201",
+      "mobile": "9876543212",
+      "type": "Tenant",
+      "monthlyCharge": 2500,
+      "pendingAmount": 5000,
+      "lastPaidMonth": "Nov-2023",
+      "joinDate": "01-Mar-2023",
+      "status": "Active"
+    },
+    {
+      "id": "MEM-202401-004",
+      "name": "Sunita Patel",
+      "flat": "B-202",
+      "mobile": "9876543213",
+      "type": "Owner",
+      "monthlyCharge": 2500,
+      "pendingAmount": 0,
+      "lastPaidMonth": "Jan-2024",
+      "joinDate": "01-Jan-2023",
+      "status": "Active"
+    },
+    {
+      "id": "MEM-202401-005",
+      "name": "Vikram Joshi",
+      "flat": "C-301",
+      "mobile": "9876543214",
+      "type": "Owner",
+      "monthlyCharge": 2500,
+      "pendingAmount": 2500,
+      "lastPaidMonth": "",
+      "joinDate": "01-Feb-2023",
+      "status": "Active"
+    }
+  ]
+}

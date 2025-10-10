@@ -1,0 +1,52 @@
+{
+  "lastUpdated": "2024-01-15T10:30:00.000Z",
+  "totalExpenses": 5,
+  "totalAmount": 29500,
+  "expenses": [
+    {
+      "expenseId": "EXP-20240115-001",
+      "date": "05-Jan-2024",
+      "description": "Electricity Bill Payment",
+      "amount": 12500,
+      "paidBy": "Treasurer",
+      "remarks": "Main building electricity",
+      "category": "Electricity"
+    },
+    {
+      "expenseId": "EXP-20240110-001",
+      "date": "10-Jan-2024",
+      "description": "Security Guard Salary",
+      "amount": 8000,
+      "paidBy": "Secretary",
+      "remarks": "January salary",
+      "category": "Security"
+    },
+    {
+      "expenseId": "EXP-20240105-001",
+      "date": "05-Jan-2024",
+      "description": "Water Tank Cleaning",
+      "amount": 2500,
+      "paidBy": "Treasurer",
+      "remarks": "Monthly cleaning service",
+      "category": "Cleaning"
+    },
+    {
+      "expenseId": "EXP-20231228-001",
+      "date": "28-Dec-2023",
+      "description": "Lift Maintenance",
+      "amount": 3500,
+      "paidBy": "Secretary",
+      "remarks": "Quarterly maintenance",
+      "category": "Repairs"
+    },
+    {
+      "expenseId": "EXP-20231225-001",
+      "date": "25-Dec-2023",
+      "description": "Gardening Services",
+      "amount": 3000,
+      "paidBy": "Treasurer",
+      "remarks": "Monthly gardening",
+      "category": "Gardening"
+    }
+  ]
+}

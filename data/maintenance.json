@@ -1,0 +1,85 @@
+{
+  "lastUpdated": "2024-01-15T10:30:00.000Z",
+  "totalBills": 7,
+  "paidBills": 2,
+  "unpaidBills": 5,
+  "bills": [
+    {
+      "entryId": "BILL-20240115-001",
+      "month": "Jan-2024",
+      "flatNo": "A-101",
+      "memberName": "Rajesh Sharma",
+      "amount": 2500,
+      "mode": "Online",
+      "paymentDate": "05-Jan-2024",
+      "status": "Paid",
+      "dueDate": "10-Jan-2024"
+    },
+    {
+      "entryId": "BILL-20240115-002",
+      "month": "Jan-2024",
+      "flatNo": "A-102",
+      "memberName": "Priya Singh",
+      "amount": 2500,
+      "mode": "",
+      "paymentDate": "",
+      "status": "Unpaid",
+      "dueDate": "10-Jan-2024"
+    },
+    {
+      "entryId": "BILL-20240115-003",
+      "month": "Jan-2024",
+      "flatNo": "B-201",
+      "memberName": "Amit Verma",
+      "amount": 2500,
+      "mode": "",
+      "paymentDate": "",
+      "status": "Unpaid",
+      "dueDate": "10-Jan-2024"
+    },
+    {
+      "entryId": "BILL-20240115-004",
+      "month": "Jan-2024",
+      "flatNo": "B-202",
+      "memberName": "Sunita Patel",
+      "amount": 2500,
+      "mode": "Cash",
+      "paymentDate": "08-Jan-2024",
+      "status": "Paid",
+      "dueDate": "10-Jan-2024"
+    },
+    {
+      "entryId": "BILL-20240115-005",
+      "month": "Jan-2024",
+      "flatNo": "C-301",
+      "memberName": "Vikram Joshi",
+      "amount": 2500,
+      "mode": "",
+      "paymentDate": "",
+      "status": "Unpaid",
+      "dueDate": "10-Jan-2024"
+    },
+    {
+      "entryId": "BILL-20231215-001",
+      "month": "Dec-2023",
+      "flatNo": "A-102",
+      "memberName": "Priya Singh",
+      "amount": 2500,
+      "mode": "",
+      "paymentDate": "",
+      "status": "Unpaid",
+      "dueDate": "10-Dec-2023"
+    },
+    {
+      "entryId": "BILL-20231115-001",
+      "month": "Nov-2023",
+      "flatNo": "B-201",
+      "memberName": "Amit Verma",
+      "amount": 2500,
+      "mode": "",
+      "paymentDate": "",
+      "status": "Unpaid",
+      "dueDate": "10-Nov-2023"
+    }
+  ]
+}
