@@ -1,0 +1,13 @@
+{
+  "name": "society-dashboard",
+  "version": "1.0.0",
+  "description": "Live Society Maintenance Dashboard",
+  "scripts": {
+    "update-data": "node update-data.js",
+    "build": "echo 'No build process needed'"
+  },
+  "dependencies": {},
+  "engines": {
+    "node": ">=18"
+  }
+}
