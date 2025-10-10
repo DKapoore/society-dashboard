@@ -1,0 +1,115 @@
+/* Add to assets/style.css */
+.status-live { color: #27ae60; }
+.status-loading { color: #f39c12; }
+.status-error { color: #e74c3c; }
+
+.controls {
+    margin: 15px 0;
+}
+
+.btn-primary, .btn-secondary {
+    background: #3498db;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin: 0 5px;
+    transition: background 0.3s ease;
+}
+
+.btn-primary:hover { background: #2980b9; }
+.btn-secondary { background: #95a5a6; }
+.btn-secondary:hover { background: #7f8c8d; }
+
+.metric-trend {
+    font-size: 0.8rem;
+    color: #666;
+    margin-top: 5px;
+}
+
+.data-source {
+    font-size: 0.7rem;
+    color: #999;
+    margin-top: 5px;
+}
+
+.payment-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px;
+    background: #f8f9fa;
+    border-radius: 8px;
+    border-left: 4px solid #27ae60;
+    margin-bottom: 8px;
+}
+
+.expense-categories {
+    display: grid;
+    gap: 8px;
+}
+
+.expense-category {
+    position: relative;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px;
+    background: #f8f9fa;
+    border-radius: 5px;
+}
+
+.category-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: #3498db;
+    opacity: 0.2;
+    border-radius: 5px;
+    transition: width 0.3s ease;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0,0,0,0.5);
+}
+
+.modal-content {
+    background-color: white;
+    margin: 5% auto;
+    padding: 20px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 800px;
+    max-height: 80vh;
+    overflow: auto;
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.close:hover {
+    color: black;
+}
+
+.card.loading {
+    text-align: center;
+    color: #666;
+}
+
+.card.error {
+    background: #ffeaa7;
+    color: #e74c3c;
+}

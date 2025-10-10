@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🏠 Live Society Dashboard</title>
+    <link rel="stylesheet" href="assets/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🏠 Society Maintenance Dashboard</h1>
+            <div class="last-updated">
+                Last Updated: <span id="lastUpdated">Loading...</span>
+                <span id="connectionStatus" class="status-live">● Live</span>
+            </div>
+            <div class="controls">
+                <button class="btn-primary" onclick="loadData()">🔄 Refresh</button>
+                <button class="btn-secondary" onclick="showRawData()">📊 Raw Data</button>
+            </div>
+        </div>
+        
+        <!-- Financial Summary -->
+        <div class="financial-summary">
+            <h2 class="section-title">Financial Summary</h2>
+            <div class="dashboard" id="financialMetrics">
+                <div class="card loading">Loading financial data...</div>
+            </div>
+        </div>
+        
+        <!-- Member Status -->
+        <h2 class="section-title">Member Status</h2>
+        <div class="members-grid" id="membersList">
+            <div class="card loading">Loading members...</div>
+        </div>
+        
+        <!-- Recent Payments -->
+        <div class="financial-summary">
+            <h2 class="section-title">Recent Payments</h2>
+            <div id="recentPayments">
+                <div class="card loading">Loading payments...</div>
+            </div>
+        </div>
+        
+        <!-- Expense Breakdown -->
+        <div class="financial-summary">
+            <h2 class="section-title">Expense Breakdown</h2>
+            <div id="expenseChart">
+                <div class="card loading">Loading expenses...</div>
+            </div>
+        </div>
+        
+        <!-- Data Source Info -->
+        <div class="data-source">
+            <p>📡 <strong>Live Data Source:</strong> Google Sheets | Updates automatically when you make changes in Sheet</p>
+        </div>
+    </div>
+
+    <!-- Raw Data Modal -->
+    <div id="rawDataModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeRawData()">&times;</span>
+            <h2>📊 Raw Data from Google Sheets</h2>
+            <pre id="rawDataContent"></pre>
+        </div>
+    </div>
+
+    <script src="assets/script.js"></script>
+</body>
+</html>
