@@ -3,68 +3,68 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏠 Live Society Dashboard</title>
-    <link rel="stylesheet" href="assets/style.css">
+    <title>Society Dashboard</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <div class="header">
-            <h1>🏠 Society Maintenance Dashboard</h1>
-            <div class="last-updated">
-                Last Updated: <span id="lastUpdated">Loading...</span>
-                <span id="connectionStatus" class="status-live">● Live</span>
+        <header>
+            <h1>🏢 Society Dashboard</h1>
+            <div class="header-info">
+                <div class="last-updated">
+                    Last Updated: <span id="lastUpdated">Loading...</span>
+                </div>
+                <div class="connection-status">
+                    Status: <span id="connectionStatus" class="status-loading">⟳ Loading...</span>
+                </div>
             </div>
-            <div class="controls">
-                <button class="btn-primary" onclick="loadData()">🔄 Refresh</button>
-                <button class="btn-secondary" onclick="showRawData()">📊 Raw Data</button>
+        </header>
+
+        <section class="metrics-section">
+            <h2>📊 Financial Metrics</h2>
+            <div id="financialMetrics" class="metrics-grid">
+                <!-- Metrics yahan load honge -->
             </div>
+        </section>
+
+        <div class="content-grid">
+            <section class="members-section">
+                <h2>👥 Members List</h2>
+                <div id="membersList" class="members-grid">
+                    <!-- Members yahan load honge -->
+                </div>
+            </section>
+
+            <section class="payments-section">
+                <h2>💰 Recent Payments</h2>
+                <div id="recentPayments">
+                    <!-- Payments yahan load honge -->
+                </div>
+            </section>
+
+            <section class="expenses-section">
+                <h2>📈 Expense Analysis</h2>
+                <div id="expenseChart">
+                    <!-- Expense chart yahan load hoga -->
+                </div>
+            </section>
         </div>
-        
-        <!-- Financial Summary -->
-        <div class="financial-summary">
-            <h2 class="section-title">Financial Summary</h2>
-            <div class="dashboard" id="financialMetrics">
-                <div class="card loading">Loading financial data...</div>
-            </div>
-        </div>
-        
-        <!-- Member Status -->
-        <h2 class="section-title">Member Status</h2>
-        <div class="members-grid" id="membersList">
-            <div class="card loading">Loading members...</div>
-        </div>
-        
-        <!-- Recent Payments -->
-        <div class="financial-summary">
-            <h2 class="section-title">Recent Payments</h2>
-            <div id="recentPayments">
-                <div class="card loading">Loading payments...</div>
-            </div>
-        </div>
-        
-        <!-- Expense Breakdown -->
-        <div class="financial-summary">
-            <h2 class="section-title">Expense Breakdown</h2>
-            <div id="expenseChart">
-                <div class="card loading">Loading expenses...</div>
-            </div>
-        </div>
-        
-        <!-- Data Source Info -->
-        <div class="data-source">
-            <p>📡 <strong>Live Data Source:</strong> Google Sheets | Updates automatically when you make changes in Sheet</p>
-        </div>
+
+        <footer>
+            <button onclick="showRawData()">View Raw Data</button>
+            <p>Society Management Dashboard</p>
+        </footer>
     </div>
 
     <!-- Raw Data Modal -->
     <div id="rawDataModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeRawData()">&times;</span>
-            <h2>📊 Raw Data from Google Sheets</h2>
+            <h3>Raw Data</h3>
             <pre id="rawDataContent"></pre>
         </div>
     </div>
 
-    <script src="assets/script.js"></script>
+    <script src="script.js"></script>
 </body>
 </html>
