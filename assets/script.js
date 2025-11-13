@@ -1,236 +1,318 @@
-// Configuration - UPDATE WITH YOUR WEB APP URL
-const WEB_APP_URL = 'https://script.google.com/macros/s/1Sui2INwTLcblVNn7DltjAk5Q86iyFvCPLyUPTEPyPW4wv-BzEK5Cz6Pp/exec';
+// script.js
+const DATA_URL = 'https://dkapoore.github.io/society-dashboard/data/data.json';
+const NOTICES_URL = 'https://dkapoore.github.io/society-dashboard/data/notice.json';
 
-// Live data loader
-async function loadData() {
-    try {
-        showLoading();
-        updateConnectionStatus('loading');
-        
-        const response = await fetch(`${WEB_APP_URL}?action=all&t=${Date.now()}`);
-        const data = await response.json();
-        
-        if (data.status === 'success') {
-            updateDashboard(data.data);
-            updateConnectionStatus('live');
-        } else {
-            throw new Error(data.error || 'Unknown error');
-        }
-        
-    } catch (error) {
-        console.error('Error loading live data:', error);
-        showError('Failed to load live data. Using cached data...');
-        updateConnectionStatus('error');
-        // Fallback to GitHub data
-        loadCachedData();
-    }
-}
+let currentData = null;
+let currentNotices = null;
 
-// Fallback to GitHub data
-async function loadCachedData() {
+// Initialize dashboard
+document.addEventListener('DOMContentLoaded', function() {
+    loadAllData();
+    // Auto-refresh every 5 minutes
+    setInterval(loadAllData, 5 * 60 * 1000);
+});
+
+// Load all data from both endpoints
+async function loadAllData() {
     try {
-        const GITHUB_BASE_URL = 'https://dkapoore.github.io/society-dashboard';
-        const [reports, members, maintenance, expenses] = await Promise.all([
-            fetch(`${GITHUB_BASE_URL}/data/reports.json`).then(r => r.json()),
-            fetch(`${GITHUB_BASE_URL}/data/members.json`).then(r => r.json()),
-            fetch(`${GITHUB_BASE_URL}/data/maintenance.json`).then(r => r.json()),
-            fetch(`${GITHUB_BASE_URL}/data/expenses.json`).then(r => r.json())
+        setStatus('loading', '⟳ Loading data...');
+        
+        const [dataResponse, noticesResponse] = await Promise.all([
+            fetch(DATA_URL).then(response => {
+                if (!response.ok) throw new Error('Data fetch failed');
+                return response.json();
+            }),
+            fetch(NOTICES_URL).then(response => {
+                if (!response.ok) throw new Error('Notices fetch failed');
+                return response.json();
+            })
         ]);
+
+        currentData = dataResponse;
+        currentNotices = noticesResponse;
+
+        updateDashboard(dataResponse, noticesResponse);
+        setStatus('success', '✅ Data loaded successfully');
         
-        updateDashboard({ reports, members, maintenance, expenses });
+        // Update last updated timestamp
+        document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
         
     } catch (error) {
-        showError('Cannot load any data source. Please check connection.');
+        console.error('Error loading data:', error);
+        setStatus('error', '❌ Failed to load data');
     }
 }
 
-function updateDashboard(data) {
-    const { reports, members, maintenance, expenses } = data;
-    
-    // Update last updated time
-    document.getElementById('lastUpdated').textContent = new Date().toLocaleString();
-    
-    // Update all sections
-    updateFinancialMetrics(reports);
-    updateMembersList(members);
-    updateRecentPayments(maintenance);
-    updateExpenseChart(expenses);
+// Update the entire dashboard with new data
+function updateDashboard(data, notices) {
+    updateFinancialMetrics(data);
+    updateSummaryTable(data);
+    updateNotices(notices);
+    updateMembersList(data);
+    updateExpenseChart(data);
 }
 
-function updateFinancialMetrics(reports) {
-    const metrics = reports.metrics;
-    const financialMetrics = document.getElementById('financialMetrics');
+// Update financial metrics section
+function updateFinancialMetrics(data) {
+    const metricsContainer = document.getElementById('financialMetrics');
     
-    financialMetrics.innerHTML = `
-        <div class="card">
-            <div class="metric-label">👥 Total Members</div>
-            <div class="metric-value">${metrics['Total Members'] || 0}</div>
-            <div class="metric-trend">Live from Google Sheets</div>
-        </div>
-        <div class="card">
-            <div class="metric-label">✅ Active Members</div>
-            <div class="metric-value">${metrics['Active Members'] || 0}</div>
-            <div class="metric-trend">Live from Google Sheets</div>
-        </div>
-        <div class="card">
-            <div class="metric-label">💰 Total Collection</div>
-            <div class="metric-value">₹${formatNumber(metrics['Total Collection (₹)'] || 0)}</div>
-            <div class="metric-trend">Updates automatically</div>
-        </div>
-        <div class="card">
-            <div class="metric-label">📊 Total Expenses</div>
-            <div class="metric-value">₹${formatNumber(metrics['Total Expenses (₹)'] || 0)}</div>
-            <div class="metric-trend">Updates automatically</div>
-        </div>
-        <div class="card">
-            <div class="metric-label">💳 Balance</div>
-            <div class="metric-value">₹${formatNumber(metrics['Balance (₹)'] || 0)}</div>
-            <div class="metric-trend">Real-time calculation</div>
-        </div>
-        <div class="card">
-            <div class="metric-label">⏰ Pending Dues</div>
-            <div class="metric-value">₹${formatNumber(metrics['Pending Dues (₹)'] || 0)}</div>
-            <div class="metric-trend">Live from Sheet</div>
-        </div>
-    `;
-}
-
-function updateMembersList(members) {
-    const membersList = document.getElementById('membersList');
-    
-    if (!members.members || members.members.length === 0) {
-        membersList.innerHTML = '<div class="card"><p>No members found in Google Sheet.</p></div>';
+    if (!data || !data.summary) {
+        metricsContainer.innerHTML = '<div class="metric-card">No data available</div>';
         return;
     }
-    
-    membersList.innerHTML = members.members.map(member => `
-        <div class="member-card ${member.pendingAmount > 0 ? 'has-pending' : ''}">
-            <div class="member-name">${member.name}</div>
-            <div class="member-details">
-                🏠 Flat: ${member.flat} | 👤 ${member.type}<br>
-                💰 Monthly: ₹${formatNumber(member.monthlyCharge)}
+
+    const metrics = [
+        { label: 'Total Collections', value: data.summary.totalCollectionAmount, format: 'currency' },
+        { label: 'Total Expenses', value: data.summary.totalExpenseAmount, format: 'currency' },
+        { label: 'Net Balance', value: data.summary.netBalance, format: 'currency' },
+        { label: 'Collections Count', value: data.summary.totalCollections, format: 'number' },
+        { label: 'Expenses Count', value: data.summary.totalExpenses, format: 'number' }
+    ];
+
+    metricsContainer.innerHTML = metrics.map(metric => `
+        <div class="metric-card">
+            <div class="metric-label">${metric.label}</div>
+            <div class="metric-value">
+                ${metric.format === 'currency' ? '₹' : ''}${metric.value?.toLocaleString('en-IN') || '0'}
             </div>
-            <div class="${member.pendingAmount > 0 ? 'pending-amount' : 'paid-amount'}">
-                ${member.pendingAmount > 0 ? '⏰ Pending: ₹' + formatNumber(member.pendingAmount) : '✅ All Paid'}
-            </div>
-            <div class="member-details">
-                📅 Last Paid: ${member.lastPaidMonth || 'Never'}
-            </div>
-            <div class="data-source">Google Sheets</div>
         </div>
     `).join('');
 }
 
-function updateRecentPayments(maintenance) {
-    const recentPayments = document.getElementById('recentPayments');
+// Update summary table with combined data
+function updateSummaryTable(data) {
+    const tableBody = document.getElementById('summaryTableBody');
     
-    const paidBills = maintenance.bills
-        .filter(bill => bill.status === 'Paid')
-        .sort((a, b) => new Date(b.paymentDate) - new Date(a.paymentDate))
-        .slice(0, 10);
-    
-    recentPayments.innerHTML = `
-        <div class="card">
-            <h3 style="margin-bottom: 15px; color: #333;">
-                Recent Payments (Last 10)
-                <span style="float: right; font-size: 0.8rem; color: #666;">Live Data</span>
-            </h3>
-            ${paidBills.length > 0 ? `
-                <div style="display: grid; gap: 10px;">
-                    ${paidBills.map(bill => `
-                        <div class="payment-item">
-                            <div class="payment-info">
-                                <strong>${bill.memberName}</strong> (${bill.flatNo})<br>
-                                <small>${bill.month} • ${bill.mode}</small>
-                            </div>
-                            <div class="payment-amount">
-                                <div class="amount">₹${formatNumber(bill.amount)}</div>
-                                <small>${formatDate(bill.paymentDate)}</small>
-                            </div>
-                        </div>
-                    `).join('')}
-                </div>
-            ` : '<p>No recent payments found in Google Sheet.</p>'}
-        </div>
-    `;
-}
-
-function updateExpenseChart(expenses) {
-    const expenseChart = document.getElementById('expenseChart');
-    
-    if (!expenses.expenses || expenses.expenses.length === 0) {
-        expenseChart.innerHTML = '<div class="card"><p>No expenses recorded in Google Sheet.</p></div>';
+    if (!data || !data.data) {
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No data available</td></tr>';
         return;
     }
+
+    // Combine collections and expenses into a single array
+    const allEntries = [
+        ...(data.data.collections || []).map(item => ({ ...item, entryType: 'collection' })),
+        ...(data.data.expenses || []).map(item => ({ ...item, entryType: 'expense' }))
+    ];
+
+    // Sort by date (newest first)
+    allEntries.sort((a, b) => new Date(b.date) - new Date(a.date));
+
+    if (allEntries.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="5" style="text-align: center;">No transactions found</td></tr>';
+        return;
+    }
+
+    tableBody.innerHTML = allEntries.map(entry => `
+        <tr>
+            <td>${formatDate(entry.date)}</td>
+            <td>
+                <span class="type-badge type-${entry.entryType}">
+                    ${entry.entryType}
+                </span>
+            </td>
+            <td>
+                ${entry.entryType === 'collection' 
+                    ? (entry.member || 'N/A')
+                    : (entry.item || 'N/A')
+                }
+            </td>
+            <td>₹${(entry.amount || 0).toLocaleString('en-IN')}</td>
+            <td>${entry.remark || '-'}</td>
+        </tr>
+    `).join('');
+}
+
+// Update notices section
+function updateNotices(notices) {
+    const noticesContainer = document.getElementById('noticesList');
     
-    const categoryTotals = {};
-    expenses.expenses.forEach(expense => {
-        const category = expense.category || 'Other';
-        categoryTotals[category] = (categoryTotals[category] || 0) + expense.amount;
-    });
-    
-    expenseChart.innerHTML = `
-        <div class="card">
-            <h3 style="margin-bottom: 15px; color: #333;">
-                Expense by Category
-                <span style="float: right; font-size: 0.8rem; color: #666;">Live from Sheet</span>
-            </h3>
-            <div class="expense-categories">
-                ${Object.entries(categoryTotals)
-                    .sort((a, b) => b[1] - a[1])
-                    .map(([category, total]) => `
-                    <div class="expense-category">
-                        <span class="category-name">${category}</span>
-                        <span class="category-amount">₹${formatNumber(total)}</span>
-                        <div class="category-bar" style="width: ${(total / Math.max(...Object.values(categoryTotals))) * 100}%"></div>
-                    </div>
-                `).join('')}
+    if (!notices || notices.length === 0) {
+        noticesContainer.innerHTML = '<div class="notice-card">No notices available</div>';
+        return;
+    }
+
+    noticesContainer.innerHTML = notices.map(notice => `
+        <div class="notice-card">
+            <div class="notice-header">
+                <div>
+                    <div class="notice-title">${notice.title || 'No Title'}</div>
+                    <div class="notice-date">${formatDate(notice.date)}</div>
+                </div>
+                <div>
+                    <span class="notice-type type-${notice.type}">${notice.type}</span>
+                    ${notice.priority ? `<span class="notice-priority priority-${notice.priority}">${notice.priority}</span>` : ''}
+                </div>
             </div>
+            <div class="notice-description">
+                ${notice.description || 'No description available'}
+            </div>
+            ${notice.issuer ? `<div class="notice-issuer">Issued by: ${notice.issuer}</div>` : ''}
+        </div>
+    `).join('');
+}
+
+// Update members list
+function updateMembersList(data) {
+    const membersContainer = document.getElementById('membersList');
+    
+    // For now, we'll show a summary of unique members from collections
+    if (!data || !data.data || !data.data.collections) {
+        membersContainer.innerHTML = '<div class="member-card">No member data available</div>';
+        return;
+    }
+
+    const uniqueMembers = {};
+    data.data.collections.forEach(collection => {
+        if (collection.member && collection.flat) {
+            uniqueMembers[collection.member] = {
+                name: collection.member,
+                flat: collection.flat,
+                amount: (uniqueMembers[collection.member]?.amount || 0) + (collection.amount || 0)
+            };
+        }
+    });
+
+    const members = Object.values(uniqueMembers).slice(0, 6); // Show first 6 members
+
+    if (members.length === 0) {
+        membersContainer.innerHTML = '<div class="member-card">No member data available</div>';
+        return;
+    }
+
+    membersContainer.innerHTML = members.map(member => `
+        <div class="member-card">
+            <div class="member-name">${member.name}</div>
+            <div class="member-details">
+                Flat: ${member.flat}<br>
+                Total Paid: ₹${member.amount.toLocaleString('en-IN')}
+            </div>
+        </div>
+    `).join('');
+}
+
+// Update expense chart (placeholder for now)
+function updateExpenseChart(data) {
+    const chartContainer = document.getElementById('expenseChart');
+    
+    if (!data || !data.data || !data.data.expenses) {
+        chartContainer.innerHTML = '<p>No expense data available for chart</p>';
+        return;
+    }
+
+    // Simple expense breakdown by category
+    const categories = {};
+    data.data.expenses.forEach(expense => {
+        const category = expense.category || 'Other';
+        categories[category] = (categories[category] || 0) + (expense.amount || 0);
+    });
+
+    const chartContent = Object.entries(categories).map(([category, amount]) => `
+        <div style="margin: 5px 0; padding: 5px; background: #f0f0f0; border-radius: 4px;">
+            <strong>${category}:</strong> ₹${amount.toLocaleString('en-IN')}
+        </div>
+    `).join('');
+
+    chartContainer.innerHTML = `
+        <div style="width: 100%;">
+            <h4 style="margin-bottom: 15px;">Expense Breakdown</h4>
+            ${chartContent}
         </div>
     `;
 }
 
-// Utility functions
-function formatNumber(num) {
-    return new Intl.NumberFormat('en-IN').format(num);
+// Filter summary table by type
+function filterSummary() {
+    const filter = document.getElementById('typeFilter').value;
+    const rows = document.querySelectorAll('#summaryTableBody tr');
+    
+    rows.forEach(row => {
+        const type = row.querySelector('.type-badge').textContent.trim();
+        if (filter === 'all' || type === filter) {
+            row.style.display = '';
+        } else {
+            row.style.display = 'none';
+        }
+    });
 }
 
+// Filter notices by type
+function filterNotices() {
+    const filter = document.getElementById('noticeTypeFilter').value;
+    const notices = document.querySelectorAll('.notice-card');
+    
+    notices.forEach(notice => {
+        const type = notice.querySelector('.notice-type').textContent.trim();
+        if (filter === 'all' || type === filter) {
+            notice.style.display = '';
+        } else {
+            notice.style.display = 'none';
+        }
+    });
+}
+
+// Refresh data manually
+function refreshData() {
+    document.body.classList.add('loading');
+    loadAllData().finally(() => {
+        document.body.classList.remove('loading');
+    });
+}
+
+// Set connection status
+function setStatus(type, message) {
+    const statusElement = document.getElementById('connectionStatus');
+    statusElement.textContent = message;
+    statusElement.className = `status-${type}`;
+}
+
+// Format date for display
 function formatDate(dateString) {
     if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleDateString('en-IN');
-}
-
-function updateConnectionStatus(status) {
-    const statusElement = document.getElementById('connectionStatus');
-    statusElement.className = `status-${status}`;
-    statusElement.textContent = status === 'live' ? '● Live' : status === 'loading' ? '⟳ Loading...' : '● Error';
-}
-
-function showLoading() {
-    document.getElementById('financialMetrics').innerHTML = '<div class="card loading">🔄 Loading live data from Google Sheets...</div>';
-    document.getElementById('membersList').innerHTML = '<div class="card loading">🔄 Loading members...</div>';
-}
-
-function showError(message) {
-    document.getElementById('financialMetrics').innerHTML = `<div class="card error">${message}</div>`;
-}
-
-// Modal functions
-function showRawData() {
-    fetch(`${https://dkapoore.github.io/society-dashboard/}?action=all`)
-        .then(r => r.json())
-        .then(data => {
-            document.getElementById('rawDataContent').textContent = JSON.stringify(data, null, 2);
-            document.getElementById('rawDataModal').style.display = 'block';
+    try {
+        return new Date(dateString).toLocaleDateString('en-IN', {
+            day: '2-digit',
+            month: 'short',
+            year: 'numeric'
         });
+    } catch {
+        return dateString;
+    }
 }
 
+// Show raw data in modal
+function showRawData() {
+    document.getElementById('rawDataContent').textContent = 
+        JSON.stringify(currentData, null, 2);
+    document.getElementById('rawNoticesContent').textContent = 
+        JSON.stringify(currentNotices, null, 2);
+    document.getElementById('rawDataModal').style.display = 'block';
+}
+
+// Close raw data modal
 function closeRawData() {
     document.getElementById('rawDataModal').style.display = 'none';
 }
 
-// Auto-refresh every 2 minutes for live data
-setInterval(loadData, 2 * 60 * 1000);
+// Tab functionality for modal
+function openTab(evt, tabName) {
+    const tabcontent = document.getElementsByClassName('tab-content');
+    for (let i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].classList.remove('active');
+    }
+    
+    const tablinks = document.getElementsByClassName('tab-btn');
+    for (let i = 0; i < tablinks.length; i++) {
+        tablinks[i].classList.remove('active');
+    }
+    
+    document.getElementById(tabName).classList.add('active');
+    evt.currentTarget.classList.add('active');
+}
 
-// Load data when page loads
-document.addEventListener('DOMContentLoaded', loadData);
+// Close modal when clicking outside
+window.onclick = function(event) {
+    const modal = document.getElementById('rawDataModal');
+    if (event.target === modal) {
+        closeRawData();
+    }
+}
