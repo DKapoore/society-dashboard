@@ -9,7 +9,14 @@
 <body>
     <div class="container">
         <header>
-            <h1>🏢 Society Dashboard</h1>
+            <div class="header-main">
+                <h1>🏢 Society Dashboard</h1>
+                <div class="header-controls">
+                    <button onclick="refreshData()" class="refresh-btn">
+                        🔄 Refresh Data
+                    </button>
+                </div>
+            </div>
             <div class="header-info">
                 <div class="last-updated">
                     Last Updated: <span id="lastUpdated">Loading...</span>
@@ -20,48 +27,110 @@
             </div>
         </header>
 
+        <!-- Summary Metrics Section -->
         <section class="metrics-section">
-            <h2>📊 Financial Metrics</h2>
+            <h2>📊 Financial Summary</h2>
             <div id="financialMetrics" class="metrics-grid">
-                <!-- Metrics yahan load honge -->
+                <!-- Metrics will load here -->
             </div>
         </section>
 
         <div class="content-grid">
-            <section class="members-section">
-                <h2>👥 Members List</h2>
-                <div id="membersList" class="members-grid">
-                    <!-- Members yahan load honge -->
+            <!-- Daily Summary Section -->
+            <section class="summary-section">
+                <div class="section-header">
+                    <h2>📋 Daily Summary</h2>
+                    <div class="summary-filters">
+                        <select id="typeFilter" onchange="filterSummary()">
+                            <option value="all">All Types</option>
+                            <option value="collection">Collections</option>
+                            <option value="expense">Expenses</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="summary-table-container">
+                    <table id="summaryTable" class="summary-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Type</th>
+                                <th>Member/Item</th>
+                                <th>Amount</th>
+                                <th>Remark</th>
+                            </tr>
+                        </thead>
+                        <tbody id="summaryTableBody">
+                            <!-- Summary data will load here -->
+                        </tbody>
+                    </table>
                 </div>
             </section>
 
-            <section class="payments-section">
-                <h2>💰 Recent Payments</h2>
-                <div id="recentPayments">
-                    <!-- Payments yahan load honge -->
+            <!-- Notices Section -->
+            <section class="notices-section">
+                <div class="section-header">
+                    <h2>📢 Society Notices</h2>
+                    <div class="notice-filters">
+                        <select id="noticeTypeFilter" onchange="filterNotices()">
+                            <option value="all">All Types</option>
+                            <option value="Maintenance">Maintenance</option>
+                            <option value="Meeting">Meeting</option>
+                            <option value="General">General</option>
+                            <option value="Emergency">Emergency</option>
+                            <option value="Event">Event</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="noticesList" class="notices-grid">
+                    <!-- Notices will load here -->
+                </div>
+            </section>
+        </div>
+
+        <!-- Additional Content Sections -->
+        <div class="content-grid secondary-grid">
+            <section class="members-section">
+                <h2>👥 Members Overview</h2>
+                <div id="membersList" class="members-grid">
+                    <!-- Members will load here -->
                 </div>
             </section>
 
             <section class="expenses-section">
                 <h2>📈 Expense Analysis</h2>
-                <div id="expenseChart">
-                    <!-- Expense chart yahan load hoga -->
+                <div id="expenseChart" class="chart-container">
+                    <!-- Expense chart will load here -->
                 </div>
             </section>
         </div>
 
         <footer>
-            <button onclick="showRawData()">View Raw Data</button>
-            <p>Society Management Dashboard</p>
+            <div class="footer-content">
+                <button onclick="showRawData()" class="raw-data-btn">
+                    📊 View Raw Data
+                </button>
+                <p>Society Management Dashboard • Auto-refresh every 5 minutes</p>
+            </div>
         </footer>
     </div>
 
     <!-- Raw Data Modal -->
     <div id="rawDataModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeRawData()">&times;</span>
-            <h3>Raw Data</h3>
-            <pre id="rawDataContent"></pre>
+            <div class="modal-header">
+                <h3>Raw Data View</h3>
+                <span class="close" onclick="closeRawData()">&times;</span>
+            </div>
+            <div class="modal-tabs">
+                <button class="tab-btn active" onclick="openTab(event, 'dataTab')">Data</button>
+                <button class="tab-btn" onclick="openTab(event, 'noticesTab')">Notices</button>
+            </div>
+            <div id="dataTab" class="tab-content active">
+                <pre id="rawDataContent"></pre>
+            </div>
+            <div id="noticesTab" class="tab-content">
+                <pre id="rawNoticesContent"></pre>
+            </div>
         </div>
     </div>
 
